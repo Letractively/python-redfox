@@ -2,7 +2,6 @@
 app class instances into WSGI applications lives.
 """
 
-from itertools import chain
 from werkzeug.routing import Map, Rule, RuleFactory
 from werkzeug import Request, ClosingIterator
 from werkzeug.exceptions import HTTPException
@@ -46,13 +45,14 @@ class WebApplication(type):
         A WSGI entry point method that uses ``__rule_map__`` to route requests.
     """
     def __new__(meta, name, bases, dict):
-        rule_defs = list(meta.extract_rule_defs(dict))
-        rules = [Rule(*args, **kwargs) for args, kwargs in rule_defs]
+        explicit_rules = list(dict.get('__rules__', []))
+        introspected_rule_defs = list(meta.extract_rule_defs(dict))
+        introspected_rules = [Rule(*args, **kwargs) for args, kwargs in introspected_rule_defs]
         
-        parent_maps = [
+        parent_rules = [
             MapRuleFactory(base.__rule_map__) for base in bases if hasattr(base, '__rule_map__')
         ]
-        dict['__rule_map__'] = Map(rules + parent_maps)
+        dict['__rule_map__'] = Map(explicit_rules + introspected_rules + parent_rules)
         dict['__call__'] = __call__
         
         return type.__new__(meta, name, bases, dict)
