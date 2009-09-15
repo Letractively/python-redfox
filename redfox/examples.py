@@ -1,7 +1,7 @@
 from werkzeug import Response
 from werkzeug.routing import Rule
 from redfox import WebApplication
-from redfox import get, post
+from redfox import get, post, rule_map
 
 class Example(WebApplication):
     def __init__(self, global_config, message, **config):
@@ -33,9 +33,11 @@ class RedirectyExample(WebApplication):
         Rule('/index', redirect_to='.')
     ]
 
-    def __init__(self, global_config, message, **config):
-        self.message = message
+    rules = property(rule_map)
+
+    def __init__(self, global_config, **config):
+        pass
 
     @get('/')
     def index(self, request):
-        return Response(self.message)
+        return Response(repr([rule for rule in self.rules.iter_rules()]))

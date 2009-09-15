@@ -32,9 +32,6 @@ def __call__(self, environ, start_response):
 class WebApplication(type):
     """Instances of this metaclass are given the following attributes:
     
-    ``__rule_defs__``
-        A ``list`` of rule definitions suitable for constructing Rule objects.
-    
     ``__rule_map__``
         A ``werkzeug.routing.Map`` object for identifying the appropriate
         method for each request. The ``Map`` is populated using rules from
@@ -43,6 +40,13 @@ class WebApplication(type):
     
     ``__call__``
         A WSGI entry point method that uses ``__rule_map__`` to route requests.
+    
+    If the class has a ``__rules__`` member, it's assumed to be a sequence of
+    Rule (or RuleFactory) objects, and takes precendence when routing requests.
+    Other Rules are built by introspecting the class's members to determine
+    which members are routable. Finally, any parent classes which have a
+    ``__rule_map__`` are included, to ensure inheritance relationships function
+    properly (whether or not the new class defines any rules).
     """
     def __new__(meta, name, bases, dict):
         explicit_rules = list(dict.get('__rules__', []))
@@ -76,6 +80,13 @@ class WebApplication(type):
         # than the parent's. See __call__ for the other half of the
         # equation.
         return routes(method, endpoint=name)
+    
+    @classmethod
+    def rule_map(meta, self):
+        """Returns the rule map for an object. This is designed to be
+        used as an optional method in classes derived from this metaclass.
+        """
+        return self.__rule_map__
 
 class MapRuleFactory(RuleFactory):
     """A Werkzeug RuleFactory backed by an existing Map."""

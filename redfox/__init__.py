@@ -11,7 +11,8 @@ __all__ = [
     'route',
     'get',
     'post',
-    'delete'
+    'delete',
+    'rule_map'
 ]
 
 class WebApplication(object):
@@ -29,3 +30,5 @@ class WebApplication(object):
     
     """
     __metaclass__ = redfox.meta.WebApplication
+
+rule_map = meta.WebApplication.rule_map
