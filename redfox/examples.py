@@ -10,7 +10,11 @@ class Example(WebApplication):
     @get('/')
     @get('/index.html')
     def index(self, request):
-        return Response(self.message)
+        return Response(request.build(
+            'echo_qs',
+            dict(message=self.message),
+            force_external=True
+        ))
     
     @get('/echo/<message>')
     def echo_qs(self, request, message):
