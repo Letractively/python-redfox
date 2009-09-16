@@ -42,17 +42,20 @@ class MapAdapterMixin(object):
         """Delegates to ``MapAdapter.match_url``, if available, or implements
         it locally otherwise. See Werkzeug ticket #414 for details."""
         parsed_url = urlsplit(url)
-        if self.subdomain:
-            netloc = '%s.%s' % (self.subdomain, self.server_name)
+        if self.map_adapter.subdomain:
+            netloc = '%s.%s' % (
+                self.map_adapter.subdomain,
+                self.map_adapter.server_name
+            )
         else:
-            netloc = self.server_name        
+            netloc = self.map_adapter.server_name        
         if any((
-            parsed_url.scheme and parsed_url.scheme != self.url_scheme,
+            parsed_url.scheme and parsed_url.scheme != self.map_adapter.url_scheme,
             parsed_url.netloc and parsed_url.netloc != netloc,
-            not parsed_url.path.startswith(self.script_name)
+            not parsed_url.path.startswith(self.map_adapter.script_name)
         )):
             raise NotFound()
-        path_info = parsed_url.path[len(self.script_name):]
+        path_info = parsed_url.path[len(self.map_adapter.script_name):]
         if parsed_url.query:
             path_info = "%s?%s" % (path_info, parsed_url.query)
         return self.match(path_info, method=method)
