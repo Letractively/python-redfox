@@ -31,4 +31,4 @@ class WebApplication(object):
     """
     __metaclass__ = redfox.meta.WebApplication
 
-rule_map = meta.WebApplication.rule_map
+rule_map = redfox.meta.WebApplication.rule_map
