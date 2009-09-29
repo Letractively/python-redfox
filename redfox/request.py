@@ -37,28 +37,6 @@ class MapAdapterMixin(object):
     def match(self, path_info=None, method=None):
         """Delegates to ``MapAdapter.match``."""
         return self.map_adapter.match(path_info=path_info, method=method)
-    
-    def match_url(self, url, method=None):
-        """Delegates to ``MapAdapter.match_url``, if available, or implements
-        it locally otherwise. See Werkzeug ticket #414 for details."""
-        parsed_url = urlsplit(url)
-        if self.map_adapter.subdomain:
-            netloc = '%s.%s' % (
-                self.map_adapter.subdomain,
-                self.map_adapter.server_name
-            )
-        else:
-            netloc = self.map_adapter.server_name        
-        if any((
-            parsed_url.scheme and parsed_url.scheme != self.map_adapter.url_scheme,
-            parsed_url.netloc and parsed_url.netloc != netloc,
-            not parsed_url.path.startswith(self.map_adapter.script_name)
-        )):
-            raise NotFound()
-        path_info = parsed_url.path[len(self.map_adapter.script_name):]
-        if parsed_url.query:
-            path_info = "%s?%s" % (path_info, parsed_url.query)
-        return self.match(path_info, method=method)
 
 class Request(WerkzeugRequest, MapAdapterMixin):
     """A request type containing all of the types covered by
