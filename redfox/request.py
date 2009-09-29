@@ -6,7 +6,7 @@ class MapAdapterMixin(object):
     def __init__(self, map_adapter):
         self.map_adapter = map_adapter
 
-    def build(self, endpoint, values=None, method=None, force_external=False):
+    def build_url(self, endpoint, values=None, method=None, force_external=False):
         """Delegates to ``MapAdapter.build``."""
         return self.map_adapter.build(
             endpoint=endpoint,
@@ -15,7 +15,7 @@ class MapAdapterMixin(object):
             force_external=force_external
         )
     
-    def dispatch(
+    def dispatch_url(
         self,
         view_func,
         path_info=None,
@@ -30,11 +30,11 @@ class MapAdapterMixin(object):
             catch_http_exceptions=catch_http_exceptions
         )
     
-    def test(self, path_info=None, method=None):
+    def test_url(self, path_info=None, method=None):
         """Delegates to ``MapAdapter.test``."""
         return self.map_adapter.test(path_info=path_info, method=method)
     
-    def match(self, path_info=None, method=None):
+    def match_url(self, path_info=None, method=None):
         """Delegates to ``MapAdapter.match``."""
         return self.map_adapter.match(path_info=path_info, method=method)
 
