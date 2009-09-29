@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='redfox',
-    version='1.1',
+    version='1.2.dev',
     author='Owen Jacobson',
     author_email='owen.jacobson@grimoire.ca',
     
