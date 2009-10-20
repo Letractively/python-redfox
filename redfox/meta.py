@@ -23,9 +23,10 @@ def __call__(self, environ, start_response):
     in application-level handler methods.
     """
     adapter = self.__rule_map__.bind_to_environ(environ)
-    request = Request(adapter, environ)
     try:
         endpoint, values = adapter.match()
+        environ['wsgiorg.routing_args'] = ((), values)
+        request = Request(adapter, environ)
         handler = getattr(self, endpoint)
         response = handler(request, **values)
     except HTTPException, e:
